@@ -74,6 +74,16 @@ function moveOnPath(timeline, id, path, duration, startWithPrevious = false) {
         ease: "power1.inOut"
     }, position); 
 }
+
+function zoom(tl) {
+    tl.to("#svg-container1 svg", {
+        duration: 1,
+        attr: { viewBox: "0 0 300 200" }, // Example viewBox to zoom into a specific area
+        ease: "power3.inOut",
+        onComplete: () => console.log("Zoom completed")
+    });
+
+}
 function animateSvg() {
     const tl = gsap.timeline();
 
@@ -83,12 +93,14 @@ function animateSvg() {
 	let website=document.querySelector("#website")
 	let email=document.querySelector("#email")
 	let treadmill=document.querySelector("#treadmill")
+
 	
 	let motionCustomerWebsite=document.querySelector("#motion-customer-website");
 	let motionWebsiteCustomer=document.querySelector("#motion-website-customer");
 	let motionWebsiteCompany=document.querySelector("#motion-website-company");
 	let motionTreadmillCustomer=document.querySelector("#motion-treadmill-customer");
 
+//	zoom(tl)	
 	moveOnPath(tl,money,motionCustomerWebsite,1)
 	moveOnPath(tl,email,motionWebsiteCustomer,1)
 	moveOnPath(tl,money,motionWebsiteCompany,1)

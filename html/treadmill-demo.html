@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <title>Dynamic SVG with GSAP</title>
+      <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/gsap.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/MotionPathPlugin.min.js"></script>
+      <style>
+		#animation-container {
+			position: relative;
+			width: 800px;
+			height: 600px;
+			display: block;
+			border: 1px solid red;
+		}
+
+		.svg-overlay {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+		}
+
+		.svg-overlay svg {
+			width: 100%;
+			height: 100%;
+		}      
+	</style>
+   </head>
+   <body>
+      <div id="animation-container">
+         <div id="svg-container1" class="svg-overlay"></div>
+         <!-- The SVG will be loaded here -->
+      </div>
+      </div>
+      <div style="margin-top:50px">
+         <button id="startAnimation" style='height:75px;width:150px'>Start Animation</button>
+      </div>
+      <script>
+		 /*
+		 +---------------------------------------------
+		 |
+		 |       # Helpers
+		 |
+		 +---------------------------------------------
+		 */
+         function loadSVG(url, target, x, y) {
+             fetch(url)
+                 .then(response => response.text())
+                 .then(svg => {
+                     document.getElementById(target).innerHTML = svg;
+                     gsap.set(`#${target} svg`, { x: x, y: y });
+                 })
+                 .catch(error => console.error('Error loading SVG:', error));
+         }
+         
+
+         function moveOnPath(timeline, id, path, duration, startWithPrevious = false) {
+             const position = startWithPrevious ? "<" : "";
+         
+             timeline.to(id, {
+                 motionPath: {
+                     path: path,
+                     align: path,
+                     alignOrigin: [0.5, 0.5],
+                     autoRotate: false
+                 },
+                 duration: duration,
+                 ease: "power1.inOut"
+             }); // Injects "<" if startWithPrevious is true, otherwise starts at the end of the timeline
+         }
+         
+		function shimmerOut(elementSelector, duration) {
+			let tl = gsap.timeline();
+			tl.to(elementSelector, { x: '-=5', duration: duration / 4, yoyo: true, repeat: 1 })
+			  .to(elementSelector, { x: '+=5', duration: duration / 4, yoyo: true, repeat: 1 })
+			  .to(elementSelector, { opacity: 0, duration: duration / 2 });
+
+			return tl;
+		}
+
+		function shimmerIn(elementSelector, duration) {
+			let tl = gsap.timeline();
+			tl.fromTo(elementSelector, { opacity: 0 }, { opacity: 1, duration: duration / 2 })
+			  .to(elementSelector, { x: '-=5', duration: duration / 4, yoyo: true, repeat: 1 })
+			  .to(elementSelector, { x: '+=5', duration: duration / 4, yoyo: true, repeat: 1 });
+
+			return tl;
+		}
+		function fadeIntoView(className, duration, staggerTime = 0.2) {
+			let tl = gsap.timeline();
+			tl.staggerFromTo(`.${className}`, duration, { opacity: 0 }, { opacity: 1 }, staggerTime);
+			return tl;
+		}
+        /*
+		+---------------------------------------------
+		|
+		|       # Main
+		|
+		+---------------------------------------------
+		*/
+
+         function animateSvg() {
+            const tl = gsap.timeline();
+            /* --- # Actors, Places, Props, Action --- */
+			let customer=document.querySelector("#customer");
+			let money=document.querySelector("#money");
+			let email=document.querySelector("#email");
+			let treadmill=document.querySelector("#treadmill");
+
+			/* --- # Motion Paths --- */
+         	let motionMoney=document.querySelector("#motion-money")
+         	let motionEmail=document.querySelector("#motion-email")
+         	let motionStore=document.querySelector("#motion-store")
+         	let motionTreadmill = document.querySelector("#motion-treadmill")
+         	
+         	/* --- # Actions --- */
+         	moveOnPath(tl,money,motionMoney,1)
+         	moveOnPath(tl,email,motionEmail,1)
+         	moveOnPath(tl,money,motionStore,1)
+         	moveOnPath(tl,treadmill,motionTreadmill,1)
+            
+         }
+        /*
+		+---------------------------------------------
+		|
+		|       # Wiring and SVG Loading
+		|
+		+---------------------------------------------
+		*/
+         document.getElementById('startAnimation').addEventListener('click', function() {
+             animateSvg();
+         });
+         
+         
+         loadSVG('svg/treadmill-demo.svg', 'svg-container1',0,0);
+         
+      </script>
+   </body>
+</html>

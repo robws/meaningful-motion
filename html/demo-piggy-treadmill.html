@@ -53,6 +53,13 @@ function loadSVG(url, target, x, y) {
         .catch(error => console.error('Error loading SVG:', error));
 }
 
+/*
++---------------------------------------------
+|
+|       # Main
+|
++---------------------------------------------
+*/
 
 function animateSvg() {
   // Create variables for each ID
@@ -62,14 +69,15 @@ function animateSvg() {
   var leg2 = document.getElementById("leg-2");
   var leg3 = document.getElementById("leg-3");
   var leg4 = document.getElementById("leg-4");
-  var flames= document.getElementById("flames");
+  
 	  // Create leg animation timeline
 	  
-   walkspeed=0.25
-   walkspeed=0.5
-   walkspeed=0.10
+  
+//   walkspeed=0.5
+// walkspeed=0.25
+ walkspeed=0.10
 
-   var tlLegs = createLegAnimation(leg1, leg2, leg3, leg4,walkspeed);
+    var tlLegs = createLegAnimation(leg1, leg2, leg3, leg4,walkspeed);
 
 	// Create main timeline
 	var tl = gsap.timeline({ repeat: 0, repeatDelay: 1 });
@@ -82,15 +90,26 @@ function animateSvg() {
 	);
 
 	tl.add(tlLegs);
+	//tl.to([leg1, leg3, leg2, leg4], { rotation: 0, duration: 0.5 }, ">");
+	runFaster(tl);
+}
 
 
-	tl.add(shimmerIn(flames,2),"<+1")
+function runFaster(tl) {
+	var flames= document.getElementById("flames");
+	  var leg1 = document.getElementById("leg-1");
+  var leg2 = document.getElementById("leg-2");
+  var leg3 = document.getElementById("leg-3");
+  var leg4 = document.getElementById("leg-4");
+  
+    tl.add(shimmerIn(flames,1),"<+1")
 	tl.to([leg1, leg3, leg2, leg4], { rotation: 0, duration: 0.5 }, "<+1");
-	tl.add(shimmerOut(flames,2),"<+1")
-	
-	tl.add(fadeIntoView("bacon", 1),"<+1.5")
+	tl.add(shimmerOut(flames,1),"<+.5")
+	tl.add(fadeIntoView("bacon", 1),"<+.5")
 
 }
+
+
 
 function createWalkingAnimation(leg1, leg2,duration) {
   var tlWalking = gsap.timeline({ repeat: 7 });
@@ -119,11 +138,7 @@ function createLegAnimation(leg1, leg2, leg3, leg4,walkspeed) {
   
   return tl;
 }
-function fadeIntoView(element, duration) {
-    let tl = gsap.timeline();
-    tl.fromTo(element, { opacity: 0 }, { opacity: 1, duration: duration });
-    return tl;
-}
+
 
 function shimmerOut(elementSelector, duration) {
     let tl = gsap.timeline();
